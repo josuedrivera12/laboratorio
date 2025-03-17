@@ -36,7 +36,7 @@ rutas.post('/guardar',
     body("contraseña")
         .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
     body("cargo")
-        .isIn(['Administrador', 'Usuario', 'Gerente', 'Empleado']).withMessage('El cargo debe ser uno de los valores permitidos'),
+        .isIn(['Administrador', 'Usuario', 'Docente',]).withMessage('El cargo debe ser uno de los valores permitidos'),
     controladorUsuarios.guardarUsuario
 );
 
@@ -50,7 +50,7 @@ rutas.put('/editar/:id',
     body("contraseña")
         .optional().isLength({ min: 6 }).withMessage("La contraseña debe tener al menos 6 caracteres"),
     body("cargo")
-        .isIn(["Administrador", "Usuario", "Gerente", "Empleado"]).withMessage("El cargo no es válido"),
+        .isIn(["Administrador", "Usuario", "Docente"]).withMessage("El cargo no es válido"),
     controladorUsuarios.editarUsuario
 );
 
