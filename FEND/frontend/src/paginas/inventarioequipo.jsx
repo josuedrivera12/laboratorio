@@ -18,12 +18,14 @@ export default function InventarioEquipo() {
         marca_teclado: "DELL",
         estado_teclado: "Bueno",
         observaciones: "",
+        puertaenlace: "",
         ip_asignada: "",
         traslado: ""
     });
 
     const [equipos, setEquipos] = useState([]);
     const [editandoId, setEditandoId] = useState(null);
+    const [ipCounter, setIpCounter] = useState({ "10.8.2.1": 12, "10.8.3.1": 2 });
 
     useEffect(() => {
         cargarEquipos();
@@ -56,6 +58,7 @@ export default function InventarioEquipo() {
             marca_teclado: "DELL",
             estado_teclado: "Bueno",
             observaciones: "",
+            puertaenlace: "",
             ip_asignada: "",
             traslado: ""
         });
@@ -64,38 +67,61 @@ export default function InventarioEquipo() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        let updatedData = { ...formData, [name]: value };
+        
+        if (name === "puertaenlace") {
+            if (value === "10.8.2.1" || value === "10.8.3.1") {
+                const newIp = `10.8.${value.split('.')[2]}.${ipCounter[value]}`;
+                setIpCounter((prev) => ({
+                    ...prev,
+                    [value]: prev[value] < 254 ? prev[value] + 1 : 12 // Reset a 12 o 2 según la puerta de enlace
+                }));
+                updatedData.ip_asignada = newIp;
+            } else {
+                updatedData.ip_asignada = "";
+            }
+        }
+
+        setFormData(updatedData);
     };
 
+    const handleRowClick = (equipo) => {
+        setFormData({ ...equipo });
+        setEditandoId(equipo.id);
+    };
+    
     const saveEquipo = async () => {
         if (!formData.asignada_a || !formData.service_tag) {
             alert("⚠️ Todos los campos obligatorios deben ser llenados");
             return;
         }
-
+    
         try {
             let response;
             if (editandoId !== null) {
-                response = await fetch(`http://localhost:4000/api/inventario_equipo/editar/${editandoId}`, {
+                console.log("Editando equipo con ID:", editandoId);
+                response = await fetch(`http://localhost:4000/api/inventario_equipo/editar?id=${editandoId}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formData)
                 });
-                if (!response.ok) throw new Error("Error al actualizar");
             } else {
                 response = await fetch("http://localhost:4000/api/inventario_equipo/guardar", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formData)
                 });
-                if (!response.ok) throw new Error("No se pudo guardar el equipo");
             }
-
+    
+            if (!response.ok) throw new Error("Error en la operación");
             await cargarEquipos();
             limpiarCampos();
         } catch (error) {
             console.error("Error guardando el equipo:", error);
         }
     };
+    
 
     const deleteEquipo = async () => {
         if (!editandoId) {
@@ -108,7 +134,7 @@ export default function InventarioEquipo() {
         }
 
         try {
-            const response = await fetch(`http://localhost:4000/api/inventario_equipo/eliminar/${editandoId}`, {
+            const response = await fetch(`http://localhost:4000/api/inventario_equipo/eliminar?id=${editandoId}`, {
                 method: "DELETE"
             });
 
@@ -121,10 +147,8 @@ export default function InventarioEquipo() {
         }
     };
 
-    const handleRowClick = (equipo) => {
-        setFormData(equipo);
-        setEditandoId(equipo.id);
-    };
+
+    
 
     return (
         <div className="inventario-container">  
@@ -205,6 +229,7 @@ export default function InventarioEquipo() {
         <fieldset className="section">
             <legend>Redes</legend>
             <div className="flex-container">
+                <input type="text" name="puertaenlace" placeholder="Puerta de enlace" value={formData.puertaenlace} onChange={handleChange} className="input" />
                 <input type="text" name="ip_asignada" placeholder="IP Asignada" value={formData.ip_asignada} onChange={handleChange} className="input" />
                 <input type="text" name="traslado" placeholder="Traslado" value={formData.traslado} onChange={handleChange} className="input" />
             </div>
@@ -241,10 +266,10 @@ export default function InventarioEquipo() {
                 <th>No. Inv. Teclado</th>
                 <th>Marca Teclado</th>
                 <th>Estado Teclado</th>
+                <th>Puerta de enlace</th>
                 <th>IP Asignada</th>
                 <th>Traslado</th>
                 <th>Observaciones</th>
-                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -264,12 +289,10 @@ export default function InventarioEquipo() {
                     <td>{equipo.no_inventario_teclado}</td>
                     <td>{equipo.marca_teclado}</td>
                     <td>{equipo.estado_teclado}</td>
+                    <td>{equipo.puertaenlace}</td>
                     <td>{equipo.ip_asignada}</td>
                     <td>{equipo.traslado}</td>
                     <td>{equipo.observaciones}</td>
-                    <td>
-                        <button className="btn delete" onClick={() => deleteEquipo(equipo.id)}>Eliminar</button>
-                    </td>
                 </tr>
             ))}
         </tbody>

@@ -70,6 +70,13 @@ const InventarioEquipo = db.define(
             type: DataTypes.TEXT,
             allowNull: true
         },
+        puertaenlace: {
+            type: DataTypes.STRING(15),
+            allowNull: true,
+            validate: {
+                isIP: true
+            }
+        },
         ip_asignada: {
             type: DataTypes.STRING(15),
             allowNull: true,

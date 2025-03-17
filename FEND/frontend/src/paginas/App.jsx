@@ -7,6 +7,7 @@ import Register from "./Register";
 import WifiForm from "./redeswifi";
 import Inventory from "./inventarioequipo";
 import Reports from "./reportes";
+import Perfil from "./Perfil";
 import "./style.css";
 
 const App = () => {
@@ -32,6 +33,8 @@ const MainContent = () => {
       navigate("/inventarioequipo");
     } else if (section === "report") {
       navigate("/reportes");
+    } else if (section === "prfil") {
+    navigate("/perfil");
     }
   };
 
@@ -46,6 +49,7 @@ const MainContent = () => {
           <Route path="/redeswifi" element={<WifiForm />} />
           <Route path="/inventarioequipo" element={<Inventory />} />
           <Route path="/reportes" element={<Reports />} />
+          <Route path="/Perfil" element={<Perfil />} />
         </Routes>
       </div>
     </>

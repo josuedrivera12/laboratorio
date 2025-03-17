@@ -16,26 +16,26 @@ const Login = () => {
     e.preventDefault();
 
     if (!formData.usuario || !formData.contraseña) {
-      alert("⚠️ Todos los campos son obligatorios.");
+      alert("Todos los campos son obligatorios.");
       return;
     }
 
     try {
       const response = await Axios.post(LoginUrl, formData);
-      console.log("✅ Respuesta del servidor:", response.data);
-      alert("✅ Inicio de sesión exitoso");
+      console.log("Respuesta del servidor:", response.data);
+      alert("Inicio de sesión exitoso");
       // Redirigir a la página de Navbar (puede ser Inventario u otra sección por defecto)
       navigate("/inventory");
     } catch (error) {
-      console.error("❌ Error en el inicio de sesión:", error);
-      alert("❌ Usuario o contraseña incorrectos.");
+      console.error("Error en el inicio de sesión:", error);
+      alert("Usuario o contraseña incorrectos.");
     }
   };
 
   return (
-<div className="login-container"> {/* 🔹 Contenedor único para login */}
+<div className="login-container"> {/*Contenedor único para login */}
       <div className="login-box">
-        <img src="/unicah.png" alt="Logo UNICAH" className="login-logo" />
+        <img src="/unicah.png" alt="Logo UNICAH" className="login-logos" />
         <h2>Iniciar Sesión</h2>
         <form onSubmit={handleSubmit}>
           <input

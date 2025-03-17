@@ -50,6 +50,12 @@ export default function Menu({ onLogout }) {
                             <span>Reportes</span>
                         </button>
                     </li>
+                    <li>
+                        <button onClick={() => navigate("/Perfil")} title="Perfil">
+                            <i className="fas fa-user-circle"></i>
+                            <span>Perfil</span>
+                        </button>
+                    </li>
                 </ul>
                 <button className="logout-button" onClick={() => navigate("/")} title="Cerrar Sesión">
                     <i className="fas fa-sign-out-alt"></i>

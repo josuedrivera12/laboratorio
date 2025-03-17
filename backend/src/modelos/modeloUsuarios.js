@@ -12,6 +12,14 @@ const Usuarios = db.define(
                 isEmail: true // Validar que sea un correo electrónico
             }
         },
+        nombre: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            unique: true,
+            validate: {
+                len: [3, 50] // El nombre de usuario debe tener entre 3 y 50 caracteres
+            }
+        },
         usuario: {
             type: DataTypes.STRING(50),
             allowNull: false,
@@ -25,7 +33,7 @@ const Usuarios = db.define(
             allowNull: false
         },
         cargo: {
-            type: DataTypes.ENUM('Administrador', 'Usuario', 'Gerente', 'Empleado'),
+            type: DataTypes.ENUM('Administrador', 'Usuario', 'Docente'),
             allowNull: false
         }
     },

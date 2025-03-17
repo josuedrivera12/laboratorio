@@ -38,25 +38,29 @@ export default function Reportes() {
             return;
         }
 
-        const doc = new jsPDF("landscape");
+        const doc = new jsPDF({ orientation: "landscape", format: "legal" });
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
 
-        // 🔹 Encabezado Institucional
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text("UNIVERSIDAD CATÓLICA DE HONDURAS", pageWidth / 2, 15, { align: "center" });
-        doc.text("NUESTRA SEÑORA REINA DE LA PAZ", pageWidth / 2, 22, { align: "center" });
-        doc.text("CAMPUS JESÚS SACRAMENTADO ANEXO COMAYAGUA", pageWidth / 2, 29, { align: "center" });
+        const addHeader = (pageNumber) => {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(16);
+            doc.setTextColor(0, 0, 0); // Color de texto negro
+            doc.text("UNIVERSIDAD CATÓLICA DE HONDURAS", pageWidth / 2, 15, { align: "center" });
+            doc.setFontSize(14);
+            doc.text("NUESTRA SEÑORA REINA DE LA PAZ", pageWidth / 2, 25, { align: "center" });
+            doc.text("CAMPUS JESÚS SACRAMENTADO - COMAYAGUA", pageWidth / 2, 35, { align: "center" });
+            doc.setFontSize(18);
+            doc.text("REPORTE DE EQUIPOS DE LABORATORIO DE CÓMPUTO", pageWidth / 2, 50, { align: "center" });
+        };
 
-        doc.setFontSize(18);
-        doc.text("REPORTE DE EQUIPOS DE LABORATORIO DE CÓMPUTO", pageWidth / 2, 40, { align: "center" });
+        addHeader(1);
 
         const columns = [
             "Asignada a", "Service Tag", "Marca CPU", "Estado",
-            "No. Inv. Monitor", "Marca Monitor", "Tamaño", "Estado",
-            "No. Inv. Mouse", "Marca Mouse", "Estado",
-            "No. Inv. Teclado", "Marca Teclado", "Estado",
+            "Inv. Monitor", "Marca Monitor", "Estado Monitor",
+            "Inv. Mouse", "Estado Mouse",
+            "Inv. Teclado", "Estado Teclado",
             "IP Asignada", "Traslado", "Observaciones"
         ];
 
@@ -67,13 +71,10 @@ export default function Reportes() {
             equipo.estado || "-",
             equipo.no_inventario_monitor || "-",
             equipo.marca_monitor || "-",
-            equipo.tamano_monitor || "-",
             equipo.estado_monitor || "-",
             equipo.no_inventario_mouse || "-",
-            equipo.marca_mouse || "-",
             equipo.estado_mouse || "-",
             equipo.no_inventario_teclado || "-",
-            equipo.marca_teclado || "-",
             equipo.estado_teclado || "-",
             equipo.ip_asignada || "-",
             equipo.traslado || "-",
@@ -81,20 +82,41 @@ export default function Reportes() {
         ]);
 
         autoTable(doc, { 
-            startY: 50,
+            startY: 60,
             head: [columns], 
             body: rows,
-            theme: "striped",
-            styles: { fontSize: 8, cellPadding: 3 },
-            headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: "bold" }, 
-            alternateRowStyles: { fillColor: [230, 240, 255] }, 
-            margin: { left: 10, right: 10 }
+            theme: "grid",
+            styles: { fontSize: 5, cellPadding: 4, valign: "middle" },
+            headStyles: { fillColor: [0, 76, 153], textColor: 255, fontStyle: "bold", halign: "center" }, 
+            alternateRowStyles: { fillColor: [240, 248, 255] }, 
+            columnStyles: {
+                0: { cellWidth: 30 },
+                1: { cellWidth: 30 },
+                2: { cellWidth: 25 },
+                3: { cellWidth: 20 },
+                4: { cellWidth: 30 },
+                5: { cellWidth: 30 },
+                6: { cellWidth: 15 },
+                7: { cellWidth: 20 },
+                8: { cellWidth: 25 },
+                9: { cellWidth: 25 },
+                10: { cellWidth: 20 },
+                11: { cellWidth: 25 },
+                12: { cellWidth: 25 },
+                13: { cellWidth: 20 },
+                14: { cellWidth: 30 },
+                15: { cellWidth: 25 },
+                16: { cellWidth: 40 },
+            },
+            margin: { left: 10, right: 10 },
+            didDrawPage: (data) => {
+                let pageNumber = doc.internal.getNumberOfPages();
+                doc.setFontSize(10);
+                doc.text(`Generado el: ${new Date().toLocaleString()}`, 14, pageHeight - 10);
+                doc.text(`Página ${pageNumber}`, pageWidth - 10, pageHeight - 15);
+                if (pageNumber > 2) addHeader(pageNumber);
+            }
         });
-
-        // 🔹 Pie de página
-        doc.setFontSize(10);
-        doc.text(`Generado el: ${new Date().toLocaleString()}`, 14, pageHeight - 10);
-        doc.text(`Página 1`, pageWidth - 20, pageHeight - 10);
 
         doc.save("Reporte_Equipos.pdf");
 

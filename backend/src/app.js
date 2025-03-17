@@ -8,6 +8,7 @@ const rutasUsuarios = require('./rutas/rutaUsuarios');
 const rutasRedeswifi = require('./rutas/rutaRedeswifi');
 const rutasInventarioequipo = require('./rutas/rutaInventarioequipo');
 
+
 // Conectar con la base de datos
 db.authenticate()
     .then(async () => {

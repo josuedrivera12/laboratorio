@@ -5,37 +5,18 @@ export const Login = Servidor + 'Usuarios/login';
 export const UsuarioGuardar = Servidor + 'Usuarios/guardar';
 
 
-export const FacturaGuardar = Servidor + 'Factura/guardar';
-export const FacturaEditar = Servidor + 'Factura/editar';
-export const FacturaListar = Servidor + 'Factura/listar';
-export const FacturaEliminar = Servidor + 'Factura/eliminar';
+export const equipoGuardar = Servidor + 'inventario_equipo/guardar';
+export const equipoEditar = Servidor + 'inventario_equipo/editar';
+export const equipoListar = Servidor + 'inventario_equipo/listar';
+export const equipoEliminar = Servidor + 'inventario_equipo/eliminar';
 
-export const ProductoGuardar = Servidor + 'Productos/guardar';
-export const ProductoEditar = Servidor + 'Productos/editar';
-export const ProductoListar = Servidor + 'Productos/listar';
-export const ProductoEliminar = Servidor + 'Productos/eliminar';
+export const wifiGuardar = Servidor + 'redes_wifi/guardar';
+export const wifiEditar = Servidor + 'redes_wifi/editar';
+export const wifiListar = Servidor + 'redes_wifi/listar';
+export const wifiEliminar = Servidor + 'redes_wifi/eliminar';
 
-export const ServicioGuardar = Servidor + 'Servicios/guardar';
-export const ServicioEditar = Servidor + 'Servicios/editar';
-export const ServicioListar = Servidor + 'Servicios/listar';
-export const ServicioEliminar = Servidor + 'Servicios/eliminar';
+export const usuarioListar = Servidor + 'Usuarios/listar';
+export const usuarioEditar = Servidor + 'Usuarios/editar';
+export const usuarioEliminar = Servidor + 'Usuarios/eliminar';
 
-export const ResponsableGuardar = Servidor + 'Responsables/guardar';
-export const ResponsableEditar = Servidor + 'Responsables/editar';
-export const ResponsableListar = Servidor + 'Responsables/listar';
-export const ResponsableEliminar = Servidor + 'Responsables/eliminar';
 
-export const HerramientaGuardar = Servidor + 'Herramientas/guardar';
-export const HerramientaEditar = Servidor + 'Herramientas/editar';
-export const HerramientaListar = Servidor + 'Herramientas/listar';
-export const HerramientaEliminar = Servidor + 'Herramientas/eliminar';
-
-export const SolicitanteGuardar = Servidor + 'Solicitantes/guardar';
-export const SolicitanteEditar = Servidor + 'Solicitantes/editar';
-export const SolicitanteListar = Servidor + 'Solicitantes/listar';
-export const SolicitanteEliminar = Servidor + 'Solicitantes/eliminar';
-
-export const FacturaDetalleGuardar = Servidor + 'FacturaDetalle/guardar';
-export const FacturaDetalleEditar = Servidor + 'FacturaDetalle/editar';
-export const FacturaDetalleListar = Servidor + 'FacturaDetalle/listar';
-export const FacturaDetalleEliminar = Servidor + 'FacturaDetalle/eliminar';

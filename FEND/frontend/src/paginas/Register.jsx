@@ -5,6 +5,7 @@ import Axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
+    nombre: "",
     correo: "",
     usuario: "",
     contraseña: "",
@@ -23,19 +24,19 @@ const Register = () => {
     console.log("Datos enviados:", formData); // 🔍 Verifica los datos antes de enviarlos
 
     if (!formData.correo || !formData.usuario || !formData.contraseña || !formData.cargo) {
-        alert("⚠️ Todos los campos son obligatorios.");
+        alert("Todos los campos son obligatorios.");
         return;
     }
 
     try {
         const response = await Axios.post("http://localhost:4000/api/Usuarios/guardar", formData);
-        console.log("✅ Respuesta del servidor:", response.data);
+        console.log("Respuesta del servidor:", response.data);
         alert(response.data.mensaje);
         
-        setFormData({ correo: "", usuario: "", contraseña: "", cargo: "" });
+        setFormData({ nombre: "", correo: "", usuario: "", contraseña: "", cargo: "" });
     } catch (error) {
-        console.error("❌ Error al registrar el usuario:", error);
-        alert("❌ Error al registrar el usuario. Revisa la consola para más detalles.");
+        console.error("Error al registrar el usuario:", error);
+        alert("Error al registrar el usuario. Revisa la consola para más detalles.");
     }
 };
 
@@ -44,6 +45,7 @@ const Register = () => {
     <div className="container">
       <h2>Registro de Usuario</h2>
       <form onSubmit={handleSubmit}>
+      <input type="text" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} />
         <input type="email" name="correo" placeholder="Correo Electrónico" value={formData.correo} onChange={handleChange} />
         <input type="text" name="usuario" placeholder="Usuario" value={formData.usuario} onChange={handleChange} />
         <input type="password" name="contraseña" placeholder="Contraseña" value={formData.contraseña} onChange={handleChange} />

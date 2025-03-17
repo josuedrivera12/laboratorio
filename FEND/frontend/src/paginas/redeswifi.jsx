@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { wifiGuardar, wifiEditar, wifiListar, wifiEliminar } from "../config/Urls";
 import "./style.css";
 
 export default function WifiForm() {
@@ -13,7 +14,7 @@ export default function WifiForm() {
 
     const cargarRedes = async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/redes_wifi/listar');
+            const response = await fetch(wifiListar);
             const data = await response.json();
             setRedes(data);
         } catch (error) {
@@ -38,23 +39,20 @@ export default function WifiForm() {
         try {
             let response;
             if (editandoId !== null) {
-                response = await fetch(`http://localhost:4000/api/redes_wifi/editar/${editandoId}`, {
+                response = await fetch(`${wifiEditar}?id=${editandoId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(nuevaRed)
                 });
-
-                if (!response.ok) throw new Error('Error al actualizar');
             } else {
-                response = await fetch('http://localhost:4000/api/redes_wifi/guardar', {
+                response = await fetch(wifiGuardar, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(nuevaRed)
                 });
-
-                if (!response.ok) throw new Error('Error al guardar');
             }
 
+            if (!response.ok) throw new Error('Error al guardar/actualizar la red');
             await cargarRedes();
             limpiarCampos();
         } catch (error) {
@@ -73,7 +71,7 @@ export default function WifiForm() {
         }
 
         try {
-            const response = await fetch(`http://localhost:4000/api/redes_wifi/eliminar/${editandoId}`, {
+            const response = await fetch(`${wifiEliminar}?id=${editandoId}`, {
                 method: 'DELETE'
             });
 
