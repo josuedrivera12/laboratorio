@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Axios from "axios";
+import Swal from "sweetalert2"; 
 import "./style.css";
 import { Login as LoginUrl } from "../config/Urls";
 import { useNavigate } from "react-router-dom";
@@ -16,24 +17,42 @@ const Login = () => {
     e.preventDefault();
 
     if (!formData.usuario || !formData.contraseña) {
-      alert("Todos los campos son obligatorios.");
+      Swal.fire({
+        icon: "warning",
+        title: "Campos obligatorios",
+        text: "Por favor, llena todos los campos antes de continuar.",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
 
     try {
       const response = await Axios.post(LoginUrl, formData);
       console.log("Respuesta del servidor:", response.data);
-      alert("Inicio de sesión exitoso");
-      // Redirigir a la página de Navbar (puede ser Inventario u otra sección por defecto)
-      navigate("/inventory");
+      
+      Swal.fire({
+        icon: "success",
+        title: "Inicio de sesión exitoso",
+        text: "Bienvenido, " + formData.usuario + "!",
+        confirmButtonColor: "#28a745",
+      }).then(() => {
+        navigate("/inventory"); // Redirige después de la confirmación
+      });
+
     } catch (error) {
       console.error("Error en el inicio de sesión:", error);
-      alert("Usuario o contraseña incorrectos.");
+      
+      Swal.fire({
+        icon: "error",
+        title: "Error en el inicio de sesión",
+        text: "Usuario o contraseña incorrectos.",
+        confirmButtonColor: "#dc3545",
+      });
     }
   };
 
   return (
-<div className="login-container"> {/*Contenedor único para login */}
+    <div className="login-container"> {/* Contenedor único para login */}
       <div className="login-box">
         <img src="/unicah.png" alt="Logo UNICAH" className="login-logos" />
         <h2>Iniciar Sesión</h2>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import { wifiGuardar, wifiEditar, wifiListar, wifiEliminar } from "../config/Urls";
 import "./style.css";
 
@@ -30,7 +31,12 @@ export default function WifiForm() {
 
     const saveWifi = async () => {
         if (!nombre || !contrasena) {
-            alert('Todos los campos son obligatorios');
+            Swal.fire({
+                icon: "warning",
+                title: "Campos obligatorios",
+                text: "Por favor, llena todos los campos antes de continuar.",
+                confirmButtonColor: "#3085d6",
+            });
             return;
         }
 
@@ -53,35 +59,76 @@ export default function WifiForm() {
             }
 
             if (!response.ok) throw new Error('Error al guardar/actualizar la red');
+
+            Swal.fire({
+                icon: "success",
+                title: editandoId ? "Red WiFi actualizada" : "Red WiFi guardada",
+                text: "La red WiFi se ha guardado correctamente.",
+                confirmButtonColor: "#28a745",
+            });
+
             await cargarRedes();
             limpiarCampos();
         } catch (error) {
             console.error('Error guardando la red:', error);
+            Swal.fire({
+                icon: "error",
+                title: "Error al guardar",
+                text: "Hubo un problema al registrar la red WiFi.",
+                confirmButtonColor: "#dc3545",
+            });
         }
     };
 
     const deleteWifi = async () => {
         if (!editandoId) {
-            alert("Selecciona un registro para eliminar.");
-            return;
-        }
-
-        if (!window.confirm("¿Seguro que deseas eliminar esta red WiFi?")) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`${wifiEliminar}?id=${editandoId}`, {
-                method: 'DELETE'
+            Swal.fire({
+                icon: "warning",
+                title: "Selecciona una red",
+                text: "Debes seleccionar una red antes de eliminarla.",
+                confirmButtonColor: "#3085d6",
             });
-
-            if (!response.ok) throw new Error("Error al eliminar");
-
-            await cargarRedes();
-            limpiarCampos();
-        } catch (error) {
-            console.error("Error eliminando la red:", error);
+            return;
         }
+
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`${wifiEliminar}?id=${editandoId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (!response.ok) throw new Error("Error al eliminar");
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Red eliminada",
+                        text: "La red WiFi ha sido eliminada correctamente.",
+                        confirmButtonColor: "#28a745",
+                    });
+
+                    await cargarRedes();
+                    limpiarCampos();
+                } catch (error) {
+                    console.error("Error eliminando la red:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error al eliminar",
+                        text: "No se pudo eliminar la red WiFi.",
+                        confirmButtonColor: "#dc3545",
+                    });
+                }
+            }
+        });
     };
 
     const handleRowClick = (red) => {
