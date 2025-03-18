@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import "./style.css";  // 🔹 Importa los estilos
+import "./style.css";
+import Swal from 'sweetalert2';
+
 
 export default function InventarioEquipo() {
     const [formData, setFormData] = useState({
@@ -92,63 +94,112 @@ export default function InventarioEquipo() {
     };
     
     const saveEquipo = async () => {
-        if (!formData.asignada_a || !formData.service_tag) {
-            alert("⚠️ Todos los campos obligatorios deben ser llenados");
-            return;
-        }
+        console.log("📦 Enviando datos al backend:", JSON.stringify(formData, null, 2));
     
         try {
-            let response;
-            if (editandoId !== null) {
-                console.log("Editando equipo con ID:", editandoId);
-                response = await fetch(`http://localhost:4000/api/inventario_equipo/editar?id=${editandoId}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData)
+            let response = await fetch("http://localhost:4000/api/inventario_equipo/guardar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            });
+    
+            let result = await response.json();
+            console.log("📥 Respuesta del servidor:", result);
+    
+            if (!response.ok) {
+                console.error("❌ Error detallado del backend:", result.errors);
+    
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al guardar',
+                    html: result.errors.map(err => `<p>⚠️ ${err.msg}</p>`).join(""),
+                    confirmButtonColor: '#d33',
+                    footer: 'Por favor revisa los datos ingresados'
                 });
-            } else {
-                response = await fetch("http://localhost:4000/api/inventario_equipo/guardar", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData)
-                });
+    
+                return;
             }
     
-            if (!response.ok) throw new Error("Error en la operación");
-            await cargarEquipos();
-            limpiarCampos();
-        } catch (error) {
-            console.error("Error guardando el equipo:", error);
-        }
-    };
-    
-
-    const deleteEquipo = async () => {
-        if (!editandoId) {
-            alert("Selecciona un registro para eliminar.");
-            return;
-        }
-
-        if (!window.confirm("¿Seguro que deseas eliminar este equipo?")) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`http://localhost:4000/api/inventario_equipo/eliminar?id=${editandoId}`, {
-                method: "DELETE"
+            Swal.fire({
+                icon: 'success',
+                title: '¡Equipo guardado!',
+                text: result.mensaje,
+                timer: 2000,
+                showConfirmButton: false
             });
-
-            if (!response.ok) throw new Error("Error al eliminar");
-
+    
             await cargarEquipos();
             limpiarCampos();
         } catch (error) {
-            console.error("Error eliminando el equipo:", error);
+            console.error("❌ Error guardando el equipo:", error);
+    
+            Swal.fire({
+                icon: 'error',
+                title: 'Error inesperado',
+                text: error.message,
+                confirmButtonColor: '#d33'
+            });
         }
     };
-
-
     
+    
+
+
+const deleteEquipo = async () => {
+    if (!editandoId) {
+        Swal.fire({
+            icon: 'warning',
+            title: '⚠️ Atención',
+            text: 'Selecciona un registro para eliminar.',
+            confirmButtonColor: '#f39c12'
+        });
+        return;
+    }
+
+    const confirmacion = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (!confirmacion.isConfirmed) return;
+
+    try {
+        const response = await fetch(`http://localhost:4000/api/inventario_equipo/eliminar?id=${editandoId}`, {
+            method: "DELETE"
+        });
+
+        if (!response.ok) throw new Error("Error al eliminar");
+
+        await cargarEquipos();
+        limpiarCampos();
+
+        Swal.fire({
+            icon: 'success',
+            title: '¡Eliminado!',
+            text: 'El equipo ha sido eliminado correctamente.',
+            timer: 2000,
+            showConfirmButton: false
+        });
+
+    } catch (error) {
+        console.error("Error eliminando el equipo:", error);
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al eliminar el equipo.',
+            confirmButtonColor: '#d33'
+        });
+    }
+};
+
+
 
     return (
         <div className="inventario-container">  

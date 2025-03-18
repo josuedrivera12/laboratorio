@@ -15,7 +15,6 @@ const Usuarios = db.define(
         nombre: {
             type: DataTypes.STRING(50),
             allowNull: false,
-            unique: true,
             validate: {
                 len: [3, 50] // El nombre de usuario debe tener entre 3 y 50 caracteres
             }

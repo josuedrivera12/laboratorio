@@ -39,6 +39,8 @@ exports.guardarUsuario = async (req, res) => {
     const { correo, nombre, usuario, contraseña, cargo } = req.body;
 
     try {
+        console.log("📥 Datos recibidos en el backend:", req.body); // 🔍 Imprimir datos recibidos
+
         // Verificar si ya existe el usuario o el correo
         const usuarioExistente = await Usuarios.findOne({ where: { [Op.or]: [{ correo }, { usuario }] } });
         if (usuarioExistente) {
@@ -47,13 +49,19 @@ exports.guardarUsuario = async (req, res) => {
 
         // Guardar usuario
         const nuevoUsuario = await Usuarios.create({ correo, nombre, usuario, contraseña, cargo });
-        res.status(201).json({ mensaje: "Usuario registrado con éxito", usuario: nuevoUsuario });
+        res.status(201).json({ mensaje: "✅ Usuario registrado con éxito", usuario: nuevoUsuario });
 
     } catch (error) {
-        console.error("Error en el registro:", error);
-        res.status(500).json({ mensaje: "Error en el servidor", error: error.message });
+        console.error("❌ ERROR en el registro:", error);
+        res.status(500).json({
+            mensaje: "Error en el servidor",
+            error: error.message,
+            stack: error.stack, // 🔥 Captura la pila de errores
+            raw: JSON.stringify(error, null, 2) // 🔥 Captura el error en JSON
+        });
     }
 };
+
 
 
 // Editar usuario

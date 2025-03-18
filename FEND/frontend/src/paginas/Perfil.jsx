@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { UsuarioGuardar, usuarioEditar, usuarioListar, usuarioEliminar } from "../config/Urls";
 import "./style.css";
+import Swal from 'sweetalert2';
+
 
 export default function UsuariosForm() {
     const [correo, setCorreo] = useState('');
@@ -16,32 +18,44 @@ export default function UsuariosForm() {
         cargarUsuarios();
     }, []);
 
+
     const cargarUsuarios = async () => {
         try {
             const response = await axios.get(usuarioListar);
             setUsuarios(response.data);
         } catch (error) {
             console.error('Error cargando usuarios:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error',
+                text: 'No se pudieron cargar los usuarios.',
+                confirmButtonColor: '#d33'
+            });
         }
     };
-
+    
     const limpiarCampos = () => {
         setCorreo('');
         setNombre('');
         setUsuario('');
         setContraseña('');
         setCargo('Administrador');
-        setEditandoId(null);
+        setEditandoId('');
     };
-
+    
     const saveUsuario = async () => {
         if (!correo || !nombre || !usuario || (!editandoId && !contraseña)) {
-            alert('Todos los campos son obligatorios');
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Campos obligatorios',
+                text: 'Todos los campos son obligatorios.',
+                confirmButtonColor: '#f39c12'
+            });
             return;
         }
-
+    
         const nuevoUsuario = { correo, nombre, usuario, contraseña, cargo };
-
+    
         try {
             let response;
             if (editandoId !== null) {
@@ -52,47 +66,91 @@ export default function UsuariosForm() {
                 response = await axios.post(UsuarioGuardar, nuevoUsuario);
                 limpiarCampos();
             }
-
+    
             if (!response.data) throw new Error('Error en la operación');
+    
             await cargarUsuarios();
             limpiarCampos();
+    
+            Swal.fire({
+                icon: 'success',
+                title: '✅ Usuario guardado',
+                text: 'El usuario se ha guardado correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+    
         } catch (error) {
             console.error('Error guardando el usuario:', error);
-            alert(error.response?.data?.mensaje || "Error al guardar el usuario");
+    
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error al guardar',
+                text: error.response?.data?.mensaje || "No se pudo guardar el usuario.",
+                confirmButtonColor: '#d33'
+            });
         }
     };
-
+    
     const deleteUsuario = async () => {
         if (!editandoId) {
-            alert("Selecciona un usuario para eliminar.");
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Atención',
+                text: 'Selecciona un usuario para eliminar.',
+                confirmButtonColor: '#f39c12'
+            });
             return;
         }
-
-        if (!window.confirm("¿Seguro que deseas eliminar este usuario?")) {
-            return;
-        }
-
+    
+        const confirmacion = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+    
+        if (!confirmacion.isConfirmed) return;
+    
         try {
             const response = await axios.delete(`${usuarioEliminar}/${editandoId}`);
             if (!response.data) throw new Error("Error al eliminar");
-
+    
             await cargarUsuarios();
             limpiarCampos();
+    
+            Swal.fire({
+                icon: 'success',
+                title: '✅ Usuario eliminado',
+                text: 'El usuario ha sido eliminado correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+    
         } catch (error) {
             console.error("Error eliminando el usuario:", error);
-            alert("No se pudo eliminar el usuario");
+    
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error',
+                text: 'No se pudo eliminar el usuario.',
+                confirmButtonColor: '#d33'
+            });
         }
     };
-
+    
     const handleRowClick = (usuario) => {
         setCorreo(usuario.correo);
         setNombre(usuario.nombre);
         setUsuario(usuario.usuario);
         setCargo(usuario.cargo);
         setEditandoId(usuario.id);
-        setContraseña(''); // No mostramos la contraseña por seguridad
+        setContraseña('');
     };
-
     return (
         <div className="wifi-container">
         <h2 className="title">Registro de Usuarios</h2>

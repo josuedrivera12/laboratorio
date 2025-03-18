@@ -2,6 +2,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./style.css";
 import LogoUnicah from "../imagenes/Icono_unicah.svg";
+import Swal from 'sweetalert2';
+
 
 export default function Menu({ onLogout }) {
     const navigate = useNavigate();
@@ -9,7 +11,6 @@ export default function Menu({ onLogout }) {
 
     if (location.pathname === "/" || location.pathname === "/register") return null;
 
-    // 🔹 Asigna la clase de fondo según la ruta actual
     const getBackgroundClass = () => {
         switch (location.pathname) {
             case "/menu":
@@ -23,6 +24,33 @@ export default function Menu({ onLogout }) {
             default:
                 return "";
         }
+    };
+
+    const handleLogout = () => {
+        Swal.fire({
+            title: '¿Seguro que deseas salir?',
+            text: 'Se cerrará tu sesión y regresarás a la pantalla de inicio.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, salir',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sesión cerrada',
+                    text: 'Has cerrado sesión correctamente.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                setTimeout(() => {
+                    navigate("/");
+                }, 2000);
+            }
+        });
     };
 
     return (
@@ -57,10 +85,10 @@ export default function Menu({ onLogout }) {
                         </button>
                     </li>
                 </ul>
-                <button className="logout-button" onClick={() => navigate("/")} title="Cerrar Sesión">
-                    <i className="fas fa-sign-out-alt"></i>
-                    <span>Salir</span>
-                </button>
+                        <button className="logout-button" onClick={handleLogout} title="Cerrar Sesión">
+                            <i className="fas fa-sign-out-alt"></i>
+                            <span>Salir</span>
+                        </button>
             </div>
         </div>
     );

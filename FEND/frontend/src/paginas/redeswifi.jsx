@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { wifiGuardar, wifiEditar, wifiListar, wifiEliminar } from "../config/Urls";
 import "./style.css";
+import Swal from 'sweetalert2';
 
 export default function WifiForm() {
     const [nombre, setNombre] = useState('');
@@ -19,23 +20,34 @@ export default function WifiForm() {
             setRedes(data);
         } catch (error) {
             console.error('Error cargando redes:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error',
+                text: 'No se pudieron cargar las redes WiFi.',
+                confirmButtonColor: '#d33'
+            });
         }
     };
-
+    
     const limpiarCampos = () => {
         setNombre('');
         setContrasena('');
         setEditandoId(null);
     };
-
+    
     const saveWifi = async () => {
         if (!nombre || !contrasena) {
-            alert('Todos los campos son obligatorios');
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Campos obligatorios',
+                text: 'Todos los campos son obligatorios.',
+                confirmButtonColor: '#f39c12'
+            });
             return;
         }
-
+    
         const nuevaRed = { nombre, contrasena };
-
+    
         try {
             let response;
             if (editandoId !== null) {
@@ -51,39 +63,86 @@ export default function WifiForm() {
                     body: JSON.stringify(nuevaRed)
                 });
             }
-
+    
             if (!response.ok) throw new Error('Error al guardar/actualizar la red');
+    
             await cargarRedes();
             limpiarCampos();
+    
+            Swal.fire({
+                icon: 'success',
+                title: '✅ Red guardada',
+                text: 'La red WiFi se ha guardado correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+    
         } catch (error) {
             console.error('Error guardando la red:', error);
+    
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error al guardar',
+                text: 'No se pudo guardar la red WiFi.',
+                confirmButtonColor: '#d33'
+            });
         }
     };
-
+    
     const deleteWifi = async () => {
         if (!editandoId) {
-            alert("Selecciona un registro para eliminar.");
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Atención',
+                text: 'Selecciona una red para eliminar.',
+                confirmButtonColor: '#f39c12'
+            });
             return;
         }
-
-        if (!window.confirm("¿Seguro que deseas eliminar esta red WiFi?")) {
-            return;
-        }
-
+    
+        const confirmacion = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+    
+        if (!confirmacion.isConfirmed) return;
+    
         try {
             const response = await fetch(`${wifiEliminar}?id=${editandoId}`, {
                 method: 'DELETE'
             });
-
+    
             if (!response.ok) throw new Error("Error al eliminar");
-
+    
             await cargarRedes();
             limpiarCampos();
+    
+            Swal.fire({
+                icon: 'success',
+                title: '✅ Red eliminada',
+                text: 'La red WiFi ha sido eliminada correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+    
         } catch (error) {
             console.error("Error eliminando la red:", error);
+    
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error',
+                text: 'No se pudo eliminar la red WiFi.',
+                confirmButtonColor: '#d33'
+            });
         }
     };
-
+    
     const handleRowClick = (red) => {
         setNombre(red.nombre);
         setContrasena(red.contrasena);

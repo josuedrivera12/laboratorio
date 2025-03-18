@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable"; 
@@ -22,6 +23,12 @@ export default function Reportes() {
             } catch (error) {
                 console.error("Error al obtener datos:", error);
                 setCargando(false);
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ Error',
+                    text: 'No se pudieron obtener los datos.',
+                    confirmButtonColor: '#d33'
+                });
             }
         }
         fetchData();
@@ -30,11 +37,21 @@ export default function Reportes() {
     // 🔹 Función para generar el Reporte de Equipos
     const generateInventoryReport = () => {
         if (cargando) {
-            alert("Los datos aún se están cargando. Intenta de nuevo en unos segundos.");
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Datos en proceso',
+                text: 'Los datos aún se están cargando. Intenta de nuevo en unos segundos.',
+                confirmButtonColor: '#f39c12'
+            });
             return;
         }
         if (!equipos || equipos.length === 0) {
-            alert("No hay datos de equipos para generar el reporte.");
+            Swal.fire({
+                icon: 'info',
+                title: 'ℹ️ No hay datos',
+                text: 'No hay datos de equipos para generar el reporte.',
+                confirmButtonColor: '#3085d6'
+            });
             return;
         }
 
@@ -45,11 +62,10 @@ export default function Reportes() {
         const addHeader = (pageNumber) => {
             doc.setFont("helvetica", "bold");
             doc.setFontSize(16);
-            doc.setTextColor(0, 0, 0); // Color de texto negro
             doc.text("UNIVERSIDAD CATÓLICA DE HONDURAS", pageWidth / 2, 15, { align: "center" });
             doc.setFontSize(14);
             doc.text("NUESTRA SEÑORA REINA DE LA PAZ", pageWidth / 2, 25, { align: "center" });
-            doc.text("CAMPUS JESÚS SACRAMENTADO - COMAYAGUA", pageWidth / 2, 35, { align: "center" });
+            doc.text("CAMPUS JESÚS SACRAMENTADO - ANEXO COMAYAGUA", pageWidth / 2, 35, { align: "center" });
             doc.setFontSize(18);
             doc.text("REPORTE DE EQUIPOS DE LABORATORIO DE CÓMPUTO", pageWidth / 2, 50, { align: "center" });
         };
@@ -89,79 +105,73 @@ export default function Reportes() {
             styles: { fontSize: 5, cellPadding: 4, valign: "middle" },
             headStyles: { fillColor: [0, 76, 153], textColor: 255, fontStyle: "bold", halign: "center" }, 
             alternateRowStyles: { fillColor: [240, 248, 255] }, 
-            columnStyles: {
-                0: { cellWidth: 30 },
-                1: { cellWidth: 30 },
-                2: { cellWidth: 25 },
-                3: { cellWidth: 20 },
-                4: { cellWidth: 30 },
-                5: { cellWidth: 30 },
-                6: { cellWidth: 15 },
-                7: { cellWidth: 20 },
-                8: { cellWidth: 25 },
-                9: { cellWidth: 25 },
-                10: { cellWidth: 20 },
-                11: { cellWidth: 25 },
-                12: { cellWidth: 25 },
-                13: { cellWidth: 20 },
-                14: { cellWidth: 30 },
-                15: { cellWidth: 25 },
-                16: { cellWidth: 40 },
-            },
-            margin: { left: 10, right: 10 },
-            didDrawPage: (data) => {
-                let pageNumber = doc.internal.getNumberOfPages();
-                doc.setFontSize(10);
-                doc.text(`Generado el: ${new Date().toLocaleString()}`, 14, pageHeight - 10);
-                doc.text(`Página ${pageNumber}`, pageWidth - 10, pageHeight - 15);
-                if (pageNumber > 2) addHeader(pageNumber);
-            }
+            margin: { left: 10, right: 10 }
         });
 
         doc.save("Reporte_Equipos.pdf");
 
+        Swal.fire({
+            icon: 'success',
+            title: '✅ Reporte generado',
+            text: 'El reporte de equipos se ha descargado correctamente.',
+            timer: 2000,
+            showConfirmButton: false
+        });
     };
 
     // 🔹 Función para generar el Reporte de Redes WiFi
     const generateWifiReport = () => {
         if (cargando) {
-            alert("Los datos aún se están cargando. Intenta de nuevo en unos segundos.");
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Datos en proceso',
+                text: 'Los datos aún se están cargando. Intenta de nuevo en unos segundos.',
+                confirmButtonColor: '#f39c12'
+            });
             return;
         }
         if (!redes || redes.length === 0) {
-            alert("No hay datos de redes WiFi para generar el reporte.");
+            Swal.fire({
+                icon: 'info',
+                title: 'ℹ️ No hay datos',
+                text: 'No hay datos de redes WiFi para generar el reporte.',
+                confirmButtonColor: '#3085d6'
+            });
             return;
         }
 
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
 
-        // 🔹 Encabezado Institucional
         doc.setFont("helvetica", "bold");
         doc.setFontSize(14);
-        doc.text("UNIVERSIDAD CATOLICA DE HONDURAS", pageWidth / 2, 15, { align: "center" });
-        doc.text("NUESTRA SEÑORA REINA DE LA PAZ", pageWidth / 2, 22, { align: "center" });
-        doc.text("CAMPUS JESÚS SACRAMENTADO ANEXO COMAYAGUA", pageWidth / 2, 29, { align: "center" });
-
-        doc.setFontSize(18);
-        doc.text("REPORTE DE REDES WIFI", pageWidth / 2, 40, { align: "center" });
+        doc.text("UNIVERSIDAD CATÓLICA DE HONDURAS", pageWidth / 2, 15, { align: "center" });
+        doc.setFontSize(14);
+        doc.text("NUESTRA SEÑORA REINA DE LA PAZ", pageWidth / 2, 25, { align: "center" });
+        doc.text("CAMPUS JESÚS SACRAMENTADO - ANEXO COMAYAGUA", pageWidth / 2, 35, { align: "center" });
+        doc.text("REPORTE DE REDES WIFI", pageWidth / 2, 50, { align: "center" });
 
         const columns = ["Nombre", "Contraseña"];
         const rows = redes.map((red) => [red.nombre || "-", red.contrasena || "-"]);
 
         autoTable(doc, { 
-            startY: 50,
+            startY: 60,
             head: [columns], 
             body: rows,
             theme: "striped",
             styles: { fontSize: 10, cellPadding: 2 },
-            headStyles: { fillColor: [46, 204, 113], textColor: 255, fontStyle: "bold" }
+            headStyles: { fillColor: [0, 76, 153], textColor: 255, fontStyle: "bold" }
         });
 
-        // 🔹 Pie de página
-        doc.setFontSize(10);
-        doc.text(`Generado el: ${new Date().toLocaleString()}`, 14, doc.internal.pageSize.getHeight() - 10);
         doc.save("Reporte_WiFi.pdf");
+
+        Swal.fire({
+            icon: 'success',
+            title: '✅ Reporte generado',
+            text: 'El reporte de redes WiFi se ha descargado correctamente.',
+            timer: 2000,
+            showConfirmButton: false
+        });
     };
 
     return (
@@ -178,7 +188,5 @@ export default function Reportes() {
                 </button>
             </div>
         </div>
-    );
-    
-    
+    );  
 }

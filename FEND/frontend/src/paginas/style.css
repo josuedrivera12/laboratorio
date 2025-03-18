@@ -1969,6 +1969,20 @@ textarea.input {
     margin-top: 100px;
 }
 
+.wifi-containerss {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 50px;
+    margin-top: 190px;
+}
+
 /* 🔹 Título */
 .title {
     font-size: 22px;
@@ -2437,3 +2451,81 @@ textarea.input {
         padding: 20px;
     }
 }
+
+
+
+
+.contenedor-registro {
+    width: 900px;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .contenedor-registro h2 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .grupo-input {
+    position: relative;
+    margin-bottom: 15px;
+  }
+  
+  .grupo-input input {
+    width: 870px;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  .grupo-input input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+  }
+  
+  .btn-registrar {
+    width: 400px;
+    padding: 12px;
+    color: #fff;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Efecto hover en botón */
+  .btn-registrar:hover {
+    background: linear-gradient(135deg, #2575fc);
+    transform: scale(1.05);
+  }
+  
+  /* Texto de redirección */
+  .contenedor-registro p {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Enlace */
+  .contenedor-registro a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  /* Efecto hover en enlace */
+  .contenedor-registro a:hover {
+    text-decoration: underline;
+  }
+  
