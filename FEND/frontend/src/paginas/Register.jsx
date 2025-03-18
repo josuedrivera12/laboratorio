@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-<<<<<<< HEAD
 import "./style.css";
 import Axios from "axios";
 import Swal from 'sweetalert2';
-=======
-import Axios from "axios";
-import "./style.css";
->>>>>>> b95706b9dba11d944d95bfa62566111af37cb7e8
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -26,7 +21,6 @@ const Register = () => {
 
     console.log("📥 Datos enviados al backend:", JSON.stringify(formData, null, 2)); // 🔍 Imprimir los datos estructurados
 
-<<<<<<< HEAD
     // 🔹 Validaciones antes de enviar los datos
     if (!formData.nombre || !formData.correo || !formData.usuario || !formData.contraseña || !formData.cargo) {
         Swal.fire({
@@ -55,16 +49,11 @@ const Register = () => {
             text: "El cargo debe ser Administrador, Usuario o Docente.",
             confirmButtonColor: "#f39c12"
         });
-=======
-    if (!formData.nombre || !formData.correo || !formData.usuario || !formData.contraseña || !formData.cargo) {
-        alert("Todos los campos son obligatorios.");
->>>>>>> b95706b9dba11d944d95bfa62566111af37cb7e8
         return;
     }
 
     try {
         const response = await Axios.post("http://localhost:4000/api/Usuarios/guardar", formData, {
-<<<<<<< HEAD
             headers: { "Content-Type": "application/json" } // 🔥 Asegurar que se envían como JSON
         });
 
@@ -78,19 +67,8 @@ const Register = () => {
             showConfirmButton: false
         });
 
-=======
-            headers: { "Content-Type": "application/json" } // 🔹 Asegura que se envían datos en formato JSON
-        });
-
-        console.log("Respuesta del servidor:", response.data);
-        alert(response.data.mensaje);
-
-        // 🔹 Limpiar el formulario después del registro exitoso
->>>>>>> b95706b9dba11d944d95bfa62566111af37cb7e8
         setFormData({ nombre: "", correo: "", usuario: "", contraseña: "", cargo: "" });
-
     } catch (error) {
-<<<<<<< HEAD
         console.error("❌ Error al registrar el usuario:", error);
         console.log("📥 Respuesta del backend:", error.response?.data); // 🔍 Imprimir respuesta del backend
 
@@ -107,18 +85,13 @@ const Register = () => {
         });
     }
 
-=======
-        console.error("Error al registrar el usuario:", error.response?.data || error.message);
-        alert("Error al registrar el usuario. Revisa la consola para más detalles.");
-    }
->>>>>>> b95706b9dba11d944d95bfa62566111af37cb7e8
   };
 
   return (
     <div className="contenedor-registro">
       <h2>Registro de Usuario</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} />
+      <input type="text" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} />
         <input type="email" name="correo" placeholder="Correo Electrónico" value={formData.correo} onChange={handleChange} />
         <input type="text" name="usuario" placeholder="Usuario" value={formData.usuario} onChange={handleChange} />
         <input type="password" name="contraseña" placeholder="Contraseña" value={formData.contraseña} onChange={handleChange} />
